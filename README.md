@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Multimodal Contrastive Learning with Tabular and Imaging Data
 
 Please cite our CVPR paper, [Best of Both Worlds: Multimodal Contrastive Learning with Tabular and Imaging Data](https://arxiv.org/abs/2303.14080), if this code was helpful.
@@ -57,3 +58,6 @@ The DVM cars dataset is open-access and can be found [here](https://deepvisualma
 Processing steps for the DVM dataset can be found [here](https://github.com/paulhager/MMCL-Tabular-Imaging/blob/main/data/create_dvm_dataset.ipynb).
 
 The exact data splits used in the paper are saved in the [data folder](https://github.com/paulhager/MMCL-Tabular-Imaging/tree/main/data).
+=======
+# CHARMS
+>>>>>>> df986bc9d2c482b632d67809d51d738b578a63de
