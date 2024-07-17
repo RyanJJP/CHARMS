@@ -14,7 +14,7 @@ Please cite our ICML'24 paper, [Tabular Insights, Visual Impacts: Transferring E
 
 We propose CHannel tAbulaR alignment with optiMal tranSport(CHARMS), which establishes an alignment between image channels and tabular attributes, enabling selective knowledge transfer that is pertinent to visual features. By maximizing the mutual information between image channels and tabular features, knowledge from both numerical and categorical tabular attributes are extracted. Experimental results demonstrate that CHARMS not only enhances the performance of image classifiers but also improves their interpretability by effectively utilizing tabular knowledge.
 
-![image-20240717150009717](C:\Users\Ryan J\AppData\Roaming\Typora\typora-user-images\image-20240717150009717.png)
+![image-20240717150009717](CHARMS.png)
 
 ## Instructions
 
