@@ -16,11 +16,13 @@ def create_logdir(name: str, resume_training: bool, wandb_logger):
   os.makedirs(logdir,exist_ok=True)
   return logdir
 
+
+
 def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float = 0.08) -> transforms.Compose:
   """
   Defines augmentations to be used with images during contrastive training and creates Compose.
   """
-  if target.lower() == 'dvm':
+  if target.lower() == 'dvm_origin':
     transform = transforms.Compose([
       transforms.RandomApply([transforms.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8)], p=0.8),
       transforms.RandomGrayscale(p=0.2),
@@ -28,8 +30,82 @@ def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float
       transforms.RandomResizedCrop(size=(img_size,img_size), scale=(crop_scale_lower, 1.0), ratio=(0.75, 1.3333333333333333)),
       transforms.RandomHorizontalFlip(p=0.5),
       #transforms.Resize(size=(img_size,img_size)),
-      transforms.Lambda(lambda x : x.float())
+      # transforms.Lambda(lambda x : x.float())
+      transforms.ToTensor(),
+      transforms.Lambda(lambda x: x/255.0),
     ])
+  elif target.lower() == 'dvm':
+    transform = transforms.Compose([
+      transforms.RandomApply([transforms.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8)], p=0.8),
+      transforms.RandomGrayscale(p=0.2),
+      transforms.RandomApply([transforms.GaussianBlur(kernel_size=29, sigma=(0.1, 2.0))], p=0.5),
+      transforms.RandomResizedCrop(size=(img_size, img_size), scale=(crop_scale_lower, 1.0),
+                                   ratio=(0.75, 1.3333333333333333)),
+      transforms.RandomHorizontalFlip(),
+      # transforms.Resize(size=(img_size,img_size)),
+      
+      transforms.ToTensor(),
+      transforms.Lambda(lambda x: x/255.0),
+    ])
+  elif target.lower() in ['adoption', 'sun', 'celeba', 'pawpularity', 'avito', 'dvm']:
+    transform = transforms.Compose([
+      transforms.RandomApply([transforms.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8)], p=0.8),
+      transforms.RandomGrayscale(p=0.2),
+      transforms.RandomApply([transforms.GaussianBlur(kernel_size=29, sigma=(0.1, 2.0))], p=0.5),
+      transforms.RandomResizedCrop(size=(img_size, img_size), scale=(crop_scale_lower, 1.0),
+                                   ratio=(0.75, 1.3333333333333333)),
+      transforms.RandomHorizontalFlip(),
+      # transforms.Resize(size=(img_size,img_size)),
+      # transforms.Lambda(lambda x: x.float()),
+      transforms.ToTensor(),
+      transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                           std=[0.229, 0.224, 0.225])
+    ])
+  # elif target.lower() == 'sun':
+  #   transform = transforms.Compose([
+  #           transforms.RandomResizedCrop(img_size),
+  #           # transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4),
+  #           transforms.RandomHorizontalFlip(),
+            
+  #           transforms.ToTensor(),
+  #           transforms.Normalize(mean=[0.485, 0.456, 0.406],
+  #                               std=[0.229, 0.224, 0.225])])
+  # elif target.lower() == 'celeba':
+  #   transform = transforms.Compose([
+  #           transforms.RandomResizedCrop(img_size),
+  #           # transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4),
+  #           transforms.RandomHorizontalFlip(),
+            
+  #           transforms.ToTensor(),
+  #           transforms.Normalize(mean=[0.485, 0.456, 0.406],
+  #                               std=[0.229, 0.224, 0.225])])
+  # elif target.lower() == 'pawpularity':
+  #   transform = transforms.Compose([
+  #           transforms.RandomResizedCrop(img_size),
+  #           # transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4),
+  #           transforms.RandomHorizontalFlip(),
+            
+  #           transforms.ToTensor(),
+  #           transforms.Normalize(mean=[0.485, 0.456, 0.406],
+  #                               std=[0.229, 0.224, 0.225])])
+  # elif target.lower() == 'avito':
+  #   transform = transforms.Compose([
+  #           transforms.RandomResizedCrop(img_size),
+  #           # transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4),
+  #           transforms.RandomHorizontalFlip(),
+            
+  #           transforms.ToTensor(),
+  #           transforms.Normalize(mean=[0.485, 0.456, 0.406],
+  #                               std=[0.229, 0.224, 0.225])])
+  # elif target.lower() == 'dvm':
+  #   transform = transforms.Compose([
+  #           transforms.RandomResizedCrop(img_size),
+  #           # transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4),
+  #           transforms.RandomHorizontalFlip(),
+            
+  #           transforms.ToTensor(),
+  #           transforms.Normalize(mean=[0.485, 0.456, 0.406],
+  #                               std=[0.229, 0.224, 0.225])])
   else:
     transform = transforms.Compose([
       transforms.RandomHorizontalFlip(),
@@ -40,6 +116,7 @@ def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float
     ])
   return transform
 
+
 def grab_soft_eval_image_augmentations(img_size: int) -> transforms.Compose:
   """
   Defines augmentations to be used during evaluation of contrastive encoders. Typically a less sever form of contrastive augmentations.
@@ -49,7 +126,8 @@ def grab_soft_eval_image_augmentations(img_size: int) -> transforms.Compose:
     transforms.RandomRotation(20),
     transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.25),
     transforms.RandomResizedCrop(size=img_size, scale=(0.8,1)),
-    transforms.Lambda(lambda x: x.float())
+    # transforms.Lambda(lambda x: x.float())
+    transforms.Lambda(lambda x: x/255.0)
   ])
   return transform
 
@@ -57,7 +135,7 @@ def grab_hard_eval_image_augmentations(img_size: int, target: str) -> transforms
   """
   Defines augmentations to be used during evaluation of contrastive encoders. Typically a less sever form of contrastive augmentations.
   """
-  if target.lower() == 'dvm':
+  if target.lower() == 'dvm_origin':
     transform = transforms.Compose([
       transforms.RandomApply([transforms.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8)], p=0.8),
       transforms.RandomGrayscale(p=0.2),
@@ -65,7 +143,8 @@ def grab_hard_eval_image_augmentations(img_size: int, target: str) -> transforms
       transforms.RandomResizedCrop(size=(img_size,img_size), scale=(0.6, 1.0), ratio=(0.75, 1.3333333333333333)),
       transforms.RandomHorizontalFlip(p=0.5),
       transforms.Resize(size=(img_size,img_size)),
-      transforms.Lambda(lambda x : x.float())
+      # transforms.Lambda(lambda x : x.float())
+      transforms.Lambda(lambda x: x/255.0)
     ])
   else:
     transform = transforms.Compose([
@@ -73,9 +152,71 @@ def grab_hard_eval_image_augmentations(img_size: int, target: str) -> transforms
       transforms.RandomRotation(45),
       transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
       transforms.RandomResizedCrop(size=img_size, scale=(0.6,1)),
-      transforms.Lambda(lambda x: x.float())
+      # transforms.Lambda(lambda x: x.float())
+      transforms.Lambda(lambda x: x/255.0)
     ])
   return transform
+
+# def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float = 0.08) -> transforms.Compose:
+#   """
+#   Defines augmentations to be used with images during contrastive training and creates Compose.
+#   """
+#   if target.lower() == 'dvm':
+#     transform = transforms.Compose([
+#       transforms.RandomApply([transforms.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8)], p=0.8),
+#       transforms.RandomGrayscale(p=0.2),
+#       transforms.RandomApply([transforms.GaussianBlur(kernel_size=29, sigma=(0.1, 2.0))],p=0.5),
+#       transforms.RandomResizedCrop(size=(img_size,img_size), scale=(crop_scale_lower, 1.0), ratio=(0.75, 1.3333333333333333)),
+#       transforms.RandomHorizontalFlip(p=0.5),
+#       #transforms.Resize(size=(img_size,img_size)),
+#       transforms.Lambda(lambda x : x.float())
+#     ])
+#   else:
+#     transform = transforms.Compose([
+#       transforms.RandomHorizontalFlip(),
+#       transforms.RandomRotation(45),
+#       transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
+#       transforms.RandomResizedCrop(size=img_size, scale=(0.2,1)),
+#       transforms.Lambda(lambda x: x.float())
+#     ])
+#   return transform
+
+# def grab_soft_eval_image_augmentations(img_size: int) -> transforms.Compose:
+#   """
+#   Defines augmentations to be used during evaluation of contrastive encoders. Typically a less sever form of contrastive augmentations.
+#   """
+#   transform = transforms.Compose([
+#     transforms.RandomHorizontalFlip(),
+#     transforms.RandomRotation(20),
+#     transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.25),
+#     transforms.RandomResizedCrop(size=img_size, scale=(0.8,1)),
+#     transforms.Lambda(lambda x: x.float())
+#   ])
+#   return transform
+
+# def grab_hard_eval_image_augmentations(img_size: int, target: str) -> transforms.Compose:
+#   """
+#   Defines augmentations to be used during evaluation of contrastive encoders. Typically a less sever form of contrastive augmentations.
+#   """
+#   if target.lower() == 'dvm':
+#     transform = transforms.Compose([
+#       transforms.RandomApply([transforms.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8)], p=0.8),
+#       transforms.RandomGrayscale(p=0.2),
+#       transforms.RandomApply([transforms.GaussianBlur(kernel_size=29, sigma=(0.1, 2.0))],p=0.5),
+#       transforms.RandomResizedCrop(size=(img_size,img_size), scale=(0.6, 1.0), ratio=(0.75, 1.3333333333333333)),
+#       transforms.RandomHorizontalFlip(p=0.5),
+#       transforms.Resize(size=(img_size,img_size)),
+#       transforms.Lambda(lambda x : x.float())
+#     ])
+#   else:
+#     transform = transforms.Compose([
+#       transforms.RandomHorizontalFlip(),
+#       transforms.RandomRotation(45),
+#       transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
+#       transforms.RandomResizedCrop(size=img_size, scale=(0.6,1)),
+#       transforms.Lambda(lambda x: x.float())
+#     ])
+#   return transform
 
 def grab_wids(category: str):
   # boat

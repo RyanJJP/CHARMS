@@ -53,9 +53,9 @@ def run(args: DictConfig):
     if args.resume_training and args.wandb_id:
       wandb_logger = WandbLogger(project=args.wandb_project, entity=args.wandb_entity, save_dir=base_dir, offline=args.offline, id=args.wandb_id, resume='must')
     else:
-      wandb_logger = WandbLogger(project=args.wandb_project, entity=args.wandb_entity, save_dir=base_dir, offline=args.offline)
+      wandb_logger = WandbLogger(project=args.wandb_project, entity=args.wandb_entity, save_dir=base_dir, offline=args.offline, log_model='all')
   else:
-    wandb_logger = WandbLogger(project='Test', entity='', save_dir=base_dir, offline=args.offline)
+    wandb_logger = WandbLogger(name=args.target, project='Test', entity='', save_dir=base_dir, offline=args.offline)
   args.wandb_id = wandb_logger.version
 
   if args.checkpoint and not args.resume_training:
@@ -63,11 +63,11 @@ def run(args: DictConfig):
       args.datatype = grab_arg_from_checkpoint(args, 'datatype')
       
   if args.pretrain:
-    pretrain(args, wandb_logger)
+    model = pretrain(args, wandb_logger)
     args.checkpoint = os.path.join(base_dir, 'runs', args.datatype, wandb_logger.experiment.name, f'checkpoint_last_epoch_{args.max_epochs-1:02}.ckpt')
   
   if args.test:
-    test(args, wandb_logger)
+    test(args, wandb_logger, model)
   elif args.evaluate:
     evaluate(args, wandb_logger)
 

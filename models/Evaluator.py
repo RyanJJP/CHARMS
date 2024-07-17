@@ -5,6 +5,7 @@ import torchmetrics
 import pytorch_lightning as pl
 
 from models.TabularModel import TabularModel
+from models.CHARMS import ImageModelPetFinderWithRTDL
 from models.ImagingModel import ImagingModel
 from models.MultimodalModel import MultimodalModel
 
@@ -16,6 +17,8 @@ class Evaluator(pl.LightningModule):
 
     if self.hparams.datatype == 'imaging' or self.hparams.datatype == 'multimodal':
       self.model = ImagingModel(self.hparams)
+    if self.hparams.datatype == 'charms':
+      self.model = ImageModelPetFinderWithRTDL(self.hparams)
     if self.hparams.datatype == 'tabular':
       self.model = TabularModel(self.hparams)
     if self.hparams.datatype == 'imaging_and_tabular':

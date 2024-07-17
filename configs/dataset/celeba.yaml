@@ -1,0 +1,35 @@
+# @package _global_
+defaults:
+  - _self_
+
+target: celeba
+task: classification
+
+num_classes: 2
+weights:
+live_loading: True  # whether to load images from a list of paths (instead of a list of .pt)
+delete_segmentation: False  # whether to delete the first channel of a three channel image
+balanced_accuracy: False
+eval_metric: acc
+data_orig:
+img_size: 225  # target size of image-resize
+one_hot: True  # whether to operate one-hot encoding on categorical features
+corruption_rate: 0.1
+
+field_lengths_tabular: None   # must be a path
+
+labels_train: "None"
+labels_val: None
+
+
+data_train_tabular: /data/caizw/PetFinder/dataset/CelebA/dataset_train.csv
+data_val_tabular: /data/caizw/PetFinder/dataset/CelebA/dataset_valid.csv
+data_test_eval_tabular: /data/caizw/PetFinder/dataset/CelebA/dataset_test.csv
+
+data_train_imaging: /data/caizw/PetFinder/raw_dataset/CelebA/img_align_celeba
+data_val_imaging: /data/caizw/PetFinder/raw_dataset/CelebA/img_align_celeba
+data_test_eval_imaging: /data/caizw/PetFinder/raw_dataset/CelebA/img_align_celeba
+
+# 用作 evaluate 的数据集
+data_train_eval_imaging: /data/caizw/PetFinder/raw_dataset/CelebA/img_align_celeba
+labels_train_eval_imaging: 

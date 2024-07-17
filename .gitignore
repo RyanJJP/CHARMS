@@ -2,3 +2,5 @@ __pycache__
 wandb
 runs
 outputs
+MMCL
+res_tmp
