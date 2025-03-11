@@ -3,10 +3,11 @@
 Please cite our ICML'24 paper, [Tabular Insights, Visual Impacts: Transferring Expertise from Tables to Images](https://openreview.net/pdf?id=v7I5FtL2pV), if this code was helpful.
 
 ```
-@inproceedings{jiangtabular,
-  title={Tabular Insights, Visual Impacts: Transferring Expertise from Tables to Images},
+@inproceedings{jiang2024tabular,
+  title={Tabular insights, visual impacts: transferring expertise from tables to images},
   author={Jiang, Jun-Peng and Ye, Han-Jia and Wang, Leye and Yang, Yang and Jiang, Yuan and Zhan, De-Chuan},
-  booktitle={Forty-first International Conference on Machine Learning}
+  booktitle={Forty-first International Conference on Machine Learning},
+  year={2024}
 }
 ```
 
